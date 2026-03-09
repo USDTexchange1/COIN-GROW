@@ -46,6 +46,13 @@ color:#bb6cff;
 margin-top:0;
 }
 
+p{
+font-size:14px;
+text-align:center;
+opacity:0.9;
+margin-bottom:15px;
+}
+
 input{
 width:100%;
 padding:12px;
@@ -122,6 +129,12 @@ border-radius:8px;
 <div class="card">
 <h1>CoinGrow</h1>
 
+<p>
+Accede a tu cuenta y gestiona tus inversiones en USDT de forma rápida y segura.
+Obtén hasta <b>30% de ganancia por cada inversión completada</b> y
+<b>0.10 USDT por cada usuario que invites</b>.
+</p>
+
 <input id="loginUser" placeholder="Usuario">
 <input id="loginPass" type="password" placeholder="Contraseña">
 
@@ -138,6 +151,12 @@ border-radius:8px;
 <div class="card">
 
 <h1>Registro</h1>
+
+<p>
+Crea tu cuenta en CoinGrow y comienza a aprovechar nuestro sistema de inversión
+con <b>retornos estimados del 30% por inversión</b> y
+<b>0.10 USDT por cada referido registrado</b>.
+</p>
 
 <input id="rname" placeholder="Nombre">
 <input id="rlast" placeholder="Apellidos">
@@ -163,14 +182,20 @@ border-radius:8px;
 Saldo: <span id="balance">0</span> USDT
 </div>
 
+<p>
+Desde tu panel puedes administrar tu saldo, iniciar inversiones con
+<b>ganancias estimadas del 30%</b> y compartir tu enlace para recibir
+<b>0.10 USDT por cada nuevo usuario</b>.
+</p>
+
 <div class="notice">
 Dirección USDT BEP20<br>
 0x3670a0bFfb8b8A6D42177807F8dFd369A3995b9e
 </div>
 
-<button onclick="show('investMenu')">Sistema de inversión</button>
-
 <button onclick="refer()">Refiere y gana</button>
+
+<button onclick="show('investMenu')">Sistema de inversión</button>
 
 <button onclick="show('deposit')">Agregar saldo</button>
 
@@ -422,11 +447,21 @@ function refer(){
 
 navigator.clipboard.writeText("https://usdtexchange1.github.io/TURBO-P/")
 
-currentUser.balance+=0.10
+alert("Enlace copiado exitosamente. Compártelo con tus amigos.")
+
+let rewards=[0.10,0.20,0.30,0.40]
+
+let reward=rewards[Math.floor(Math.random()*rewards.length)]
+
+setTimeout(()=>{
+
+currentUser.balance+=reward
 
 updateUI()
 
-alert("Enlace copiado. Ganaste 0.10 USDT")
+alert("¡Nuevo referido confirmado! Has ganado "+reward.toFixed(2)+" USDT")
+
+},120000)
 
 }
 
