@@ -22,19 +22,6 @@ align-items:center;
 height:100vh;
 }
 
-.menuTop{
-position:absolute;
-top:10px;
-display:flex;
-gap:10px;
-}
-
-.menuTop button{
-width:auto;
-padding:8px 12px;
-font-size:12px;
-}
-
 .screen{
 display:none;
 width:100%;
@@ -88,6 +75,10 @@ font-weight:bold;
 cursor:pointer;
 }
 
+button:hover{
+background:#9c3cff;
+}
+
 .secondary{
 background:#3c0c66;
 }
@@ -127,24 +118,12 @@ background:#2c0b4f;
 border-radius:8px;
 }
 
-.mov{
-background:#22043f;
-padding:8px;
-margin-top:6px;
-border-radius:6px;
-font-size:12px;
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="menuTop">
-<button onclick="info('funciona')">Cómo funciona</button>
-<button onclick="info('beneficios')">Beneficios</button>
-<button onclick="info('inversion')">Inversiones</button>
-</div>
+<!-- LOGIN -->
 
 <div id="login" class="screen active">
 <div class="card">
@@ -166,6 +145,8 @@ Obtén hasta <b>30% de ganancia por cada inversión completada</b> y
 </div>
 </div>
 
+<!-- REGISTER -->
+
 <div id="register" class="screen">
 <div class="card">
 
@@ -173,7 +154,8 @@ Obtén hasta <b>30% de ganancia por cada inversión completada</b> y
 
 <p>
 Crea tu cuenta en CoinGrow y comienza a aprovechar nuestro sistema de inversión
-con <b>retornos estimados del 30% por inversión</b>.
+con <b>retornos estimados del 30% por inversión</b> y
+<b>0.10 USDT por cada referido registrado</b>.
 </p>
 
 <input id="rname" placeholder="Nombre">
@@ -189,12 +171,20 @@ con <b>retornos estimados del 30% por inversión</b>.
 </div>
 </div>
 
+<!-- PANEL PRINCIPAL -->
+
 <div id="panel" class="screen">
 <div class="card">
 
 <div class="balance">
 Saldo: <span id="balance">0</span> USDT
 </div>
+
+<p>
+Desde tu panel puedes administrar tu saldo, iniciar inversiones con
+<b>ganancias estimadas del 30%</b> y compartir tu enlace para recibir
+<b>0.10 USDT por cada nuevo usuario</b>.
+</p>
 
 <div class="notice">
 Dirección USDT BEP20<br>
@@ -204,54 +194,106 @@ Dirección USDT BEP20<br>
 <button onclick="refer()">Refiere y gana</button>
 <button onclick="show('investMenu')">Sistema de inversión</button>
 <button onclick="show('deposit')">Agregar saldo</button>
-<button onclick="withdraw()">Retirar</button>
-<button onclick="showStats()">Estadísticas</button>
-<button onclick="showHistory()">Historial movimientos</button>
-<button onclick="colaborador()">Quiero ser colaborador</button>
-<button onclick="showNotifications()">Notificaciones</button>
+
+<button onclick="alert('El sistema de retiro estará disponible próximamente')">
+Retirar
+</button>
 
 <button class="secondary" onclick="logout()">Cerrar sesión</button>
 
 </div>
 </div>
 
-<div id="deposit" class="screen">
-<div class="card">
-
-<h1>Depósito</h1>
-
-<p>Envía USDT a la dirección indicada y pega el hash.</p>
-
-<input id="depAmount" placeholder="Cantidad enviada">
-<input id="hash" placeholder="Hash de transacción">
-
-<button onclick="confirmDeposit()">Confirmar depósito</button>
-
-<button class="secondary" onclick="show('panel')">Volver</button>
-
-</div>
-</div>
+<!-- MENÚ INVERSIÓN -->
 
 <div id="investMenu" class="screen">
 <div class="card">
 
 <h1>Inversiones</h1>
 
-<button onclick="startInvestment()">Iniciar inversión</button>
+<button onclick="show('startInvest')">
+Iniciar potenciador
+</button>
 
-<div id="investments"></div>
+<button onclick="showInvestments()">
+Ver inversiones activas
+</button>
 
-<button class="secondary" onclick="show('panel')">Volver</button>
+<button class="secondary" onclick="show('panel')">
+Ir al panel principal
+</button>
 
 </div>
 </div>
 
-<div id="history" class="screen">
+<!-- INICIAR INVERSIÓN -->
+
+<div id="startInvest" class="screen">
 <div class="card">
 
-<h1>Movimientos</h1>
+<h1>Iniciar potenciador</h1>
 
-<div id="movList"></div>
+<input id="investAmount" type="number" placeholder="Cantidad a invertir">
+
+<button onclick="startInvestment()">
+Confirmar inversión
+</button>
+
+<button class="secondary" onclick="show('panel')">
+Ir al panel principal
+</button>
+
+</div>
+</div>
+
+<!-- VER INVERSIONES -->
+
+<div id="investments" class="screen">
+<div class="card">
+
+<h1>Inversiones activas</h1>
+
+<div id="investmentList"></div>
+
+<button class="secondary" onclick="show('panel')">
+Ir al panel principal
+</button>
+
+</div>
+</div>
+
+<!-- DEPOSITO -->
+
+<div id="deposit" class="screen">
+<div class="card">
+
+<h1>Agregar saldo</h1>
+
+<input id="depositAmount" type="number" placeholder="Cantidad">
+
+<button onclick="confirmDeposit()">
+Confirmar
+</button>
+
+<button class="secondary" onclick="show('panel')">
+Ir al panel principal
+</button>
+
+</div>
+</div>
+
+<!-- HASH -->
+
+<div id="hash" class="screen">
+<div class="card">
+
+<h1>Confirmar Hash</h1>
+
+<input id="txhash" placeholder="Hash de transacción">
+
+<button onclick="finishDeposit()">
+Validar
+</button>
 
 <button class="secondary" onclick="show('panel')">
 Ir al panel principal
@@ -283,8 +325,18 @@ show("panel")
 
 function register(){
 
+if(!rname.value || !rlast.value || !remail.value || !ruser.value || !rpass.value || !rpass2.value){
+alert("Debes completar todos los campos")
+return
+}
+
 if(rpass.value!==rpass2.value){
 alert("Contraseñas no coinciden")
+return
+}
+
+if(localStorage.getItem("user_"+ruser.value)){
+alert("Ese usuario ya existe")
 return
 }
 
@@ -296,13 +348,12 @@ user:ruser.value,
 pass:rpass.value,
 balance:1,
 deposited:0,
-investments:[],
-movements:[]
+investments:[]
 }
 
 localStorage.setItem("user_"+user.user,JSON.stringify(user))
 
-alert("Cuenta creada. Recibiste 1 USDT de bono.")
+alert("Cuenta creada y recibiste 1 USDT de bono")
 
 show("login")
 
@@ -335,51 +386,50 @@ show("panel")
 }
 
 function logout(){
+
 localStorage.removeItem("loggedUser")
+
 currentUser=null
+
 show("login")
+
 }
 
 function updateUI(){
+
 balance.innerText=currentUser.balance.toFixed(2)
+
 save()
+
 }
 
 function save(){
-localStorage.setItem("user_"+currentUser.user,JSON.stringify(currentUser))
-}
 
-function addMov(text){
-currentUser.movements.push({
-text:text,
-date:new Date().toLocaleString()
-})
-save()
+localStorage.setItem("user_"+currentUser.user,JSON.stringify(currentUser))
+
 }
 
 function refer(){
 
-let link="https://usdtexchange1.github.io/COIN-GROW/?ref="+currentUser.user
+if(currentUser.deposited < 3){
+alert("Debes haber realizado depósitos mínimos de 3 USDT para poder utilizar el sistema de referidos.")
+return
+}
 
-navigator.clipboard.writeText(link)
+navigator.clipboard.writeText("https://usdtexchange1.github.io/COIN-GROW/")
 
-alert(
-"Enlace de referido copiado.\n\n"+
-"Compártelo con tus amigos.\n"+
-"La recompensa se acreditará en aproximadamente 2 minutos."
-)
+alert("Enlace copiado exitosamente. Compártelo con tus amigos.")
 
-setTimeout(function(){
+let rewards=[0.10,0.20,0.30,0.40]
 
-let reward=(Math.random()*0.3+0.1).toFixed(2)
+let reward=rewards[Math.floor(Math.random()*rewards.length)]
 
-currentUser.balance+=Number(reward)
+setTimeout(()=>{
 
-addMov("Recompensa por referido +"+reward+" USDT")
-
+currentUser.balance+=reward
 updateUI()
 
-alert("Has recibido "+reward+" USDT por referido.")
+alert("¡Nuevo referido confirmado! Has ganado "+reward.toFixed(2)+" USDT")
 
 },120000)
 
@@ -387,24 +437,56 @@ alert("Has recibido "+reward+" USDT por referido.")
 
 function confirmDeposit(){
 
-let amount=Number(depAmount.value)
+let amount=parseFloat(depositAmount.value)
 
-if(!amount || !hash.value){
-alert("Debes completar los datos")
+if(amount<=0){
+alert("Cantidad inválida")
 return
 }
+
+localStorage.setItem("pendingDeposit",amount)
+
+show("hash")
+
+}
+
+function validHash(hash){
+return /^0x[a-fA-F0-9]{64}$/.test(hash)
+}
+
+function finishDeposit(){
+
+let hash=txhash.value
+
+if(!validHash(hash)){
+alert("Hash inválido")
+return
+}
+
+let usedHashes=JSON.parse(localStorage.getItem("usedHashes")||"[]")
+
+if(usedHashes.includes(hash)){
+alert("Este hash ya fue utilizado")
+return
+}
+
+usedHashes.push(hash)
+
+localStorage.setItem("usedHashes",JSON.stringify(usedHashes))
+
+let amount=parseFloat(localStorage.getItem("pendingDeposit"))
 
 currentUser.balance+=amount
 currentUser.deposited+=amount
 
-addMov("Depósito de "+amount+" USDT")
-
-if(amount>=5){
-currentUser.balance+=15
-addMov("Bono por depósito +15 USDT")
+if(amount >= 5){
+currentUser.balance += 15
+alert("Bono de depósito aplicado: +15 USDT")
 }
 
 updateUI()
+
+localStorage.removeItem("pendingDeposit")
 
 alert("Depósito confirmado")
 
@@ -414,180 +496,72 @@ show("panel")
 
 function startInvestment(){
 
-let amount=10
+let amount=parseFloat(investAmount.value)
 
-if(currentUser.balance<amount){
+if(amount<=0){
+alert("Cantidad inválida")
+return
+}
+
+if(amount>currentUser.balance){
 alert("Saldo insuficiente")
 return
 }
 
 currentUser.balance-=amount
 
-let inv={
+let start=Date.now()
+let end=start+(7*24*60*60*1000)
+
+currentUser.investments.push({
 amount:amount,
-start:Date.now(),
-duration:60000
-}
-
-currentUser.investments.push(inv)
-
-addMov("Inversión iniciada 10 USDT")
+start:start,
+end:end
+})
 
 updateUI()
 
-showInvestments()
+alert("Inversión iniciada")
+
+show("panel")
 
 }
 
 function showInvestments(){
 
-let div=document.getElementById("investments")
+let list=document.getElementById("investmentList")
 
-div.innerHTML=""
+list.innerHTML=""
 
 currentUser.investments.forEach((inv,i)=>{
 
-let progress=((Date.now()-inv.start)/inv.duration)*100
-
-if(progress>=100){
-
 let profit=inv.amount*1.3
 
-currentUser.balance+=profit
+let progress=((Date.now()-inv.start)/(inv.end-inv.start))*100
 
-addMov("Inversión finalizada +"+profit+" USDT")
+if(progress>100)progress=100
 
-currentUser.investments.splice(i,1)
+let div=document.createElement("div")
 
-updateUI()
+div.className="investment"
 
-}else{
+div.innerHTML=
 
-let el=document.createElement("div")
+`Inversión #${i+1}<br>
+Cantidad: ${inv.amount} USDT<br>
+Ganancia estimada: ${profit.toFixed(2)} USDT<br>
+Fecha pago: ${new Date(inv.end).toLocaleDateString()}
 
-el.className="investment"
-
-el.innerHTML=`
-Inversión: ${inv.amount} USDT
 <div class="progress">
 <div class="progress-bar" style="width:${progress}%"></div>
 </div>
 `
 
-div.appendChild(el)
-
-}
-
-})
-
-save()
-
-}
-
-setInterval(showInvestments,3000)
-
-function withdraw(){
-
-if(currentUser.balance<350){
-alert("El retiro mínimo es de 350 USDT")
-return
-}
-
-currentUser.balance-=350
-
-addMov("Retiro solicitado de 350 USDT")
-
-updateUI()
-
-alert("Solicitud de retiro enviada")
-
-}
-
-function showStats(){
-
-alert(
-"Estadísticas\n\n"+
-"Saldo: "+currentUser.balance+" USDT\n"+
-"Depositado: "+currentUser.deposited+" USDT\n"+
-"Inversiones activas: "+currentUser.investments.length
-)
-
-}
-
-function showNotifications(){
-
-alert(
-"Notificaciones\n\n"+
-"Bono de registro: 1 USDT\n"+
-"Bono por depósito mayor a 5 USDT: +15 USDT\n"+
-"Retiro mínimo permitido: 350 USDT"
-)
-
-}
-
-function colaborador(){
-
-alert(
-"Programa de Colaboradores\n\n"+
-"Beneficios:\n"+
-"- Comisiones adicionales\n"+
-"- Acceso a promociones\n"+
-"- Soporte prioritario"
-)
-
-}
-
-function showHistory(){
-
-let list=document.getElementById("movList")
-
-list.innerHTML=""
-
-currentUser.movements.forEach(m=>{
-
-let div=document.createElement("div")
-
-div.className="mov"
-
-div.innerHTML=m.text+"<br>"+m.date
-
 list.appendChild(div)
 
 })
 
-show("history")
-
-}
-
-function info(type){
-
-if(type==="funciona"){
-alert(
-"Cómo funciona CoinGrow\n\n"+
-"1. Regístrate y recibe 1 USDT.\n"+
-"2. Deposita USDT.\n"+
-"3. Invierte tu saldo.\n"+
-"4. Obtén hasta 30% de ganancias."
-)
-}
-
-if(type==="beneficios"){
-alert(
-"Beneficios\n\n"+
-"Bono registro: 1 USDT\n"+
-"Bono depósito: +15 USDT\n"+
-"Sistema de inversión 30%\n"+
-"Programa de referidos"
-)
-}
-
-if(type==="inversion"){
-alert(
-"Inversiones\n\n"+
-"Las inversiones duran 7 días.\n"+
-"Al finalizar recibes tu capital más 30%."
-)
-}
+show("investments")
 
 }
 
